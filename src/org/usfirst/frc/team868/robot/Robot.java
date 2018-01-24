@@ -8,12 +8,14 @@
 package org.usfirst.frc.team868.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team868.robot.commands.ExampleCommand;
-import org.usfirst.frc.team868.robot.subsystems.ExampleSubsystem;
+import org.usfirst.frc.team868.robot.commands.ZeroEncoders;
+import org.usfirst.frc.team868.robot.subsystems.DriveSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,8 +25,7 @@ import org.usfirst.frc.team868.robot.subsystems.ExampleSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-	public static final ExampleSubsystem kExampleSubsystem
-			= new ExampleSubsystem();
+	public static final DriveSubsystem driver = new DriveSubsystem();
 	public static OI m_oi;
 
 	Command m_autonomousCommand;
@@ -40,6 +41,9 @@ public class Robot extends TimedRobot {
 		m_chooser.addDefault("Default Auto", new ExampleCommand());
 		// chooser.addObject("My Auto", new MyAutoCommand());
 		SmartDashboard.putData("Auto mode", m_chooser);
+		driver.updateDashboard();
+		SmartDashboard.putData("Zero Encoders", new ZeroEncoders());
+		SmartDashboard.putString("Test", "Test");
 	}
 
 	/**
@@ -54,7 +58,14 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void disabledPeriodic() {
+		updateDashboard();
 		Scheduler.getInstance().run();
+	}
+
+	private void updateDashboard() {
+		
+		driver.updateDashboard();
+		
 	}
 
 	/**
@@ -70,19 +81,9 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-		m_autonomousCommand = m_chooser.getSelected();
-
-		/*
-		 * String autoSelected = SmartDashboard.getString("Auto Selector",
-		 * "Default"); switch(autoSelected) { case "My Auto": autonomousCommand
-		 * = new MyAutoCommand(); break; case "Default Auto": default:
-		 * autonomousCommand = new ExampleCommand(); break; }
-		 */
-
-		// schedule the autonomous command (example)
-		if (m_autonomousCommand != null) {
-			m_autonomousCommand.start();
-		}
+		//driver.setMotors(.5, .5);
+		Timer.delay(1);
+		//driver.setMotors(0, 0);
 	}
 
 	/**
@@ -90,6 +91,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousPeriodic() {
+		updateDashboard();
 		Scheduler.getInstance().run();
 	}
 
@@ -109,6 +111,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void teleopPeriodic() {
+		updateDashboard();
 		Scheduler.getInstance().run();
 	}
 
